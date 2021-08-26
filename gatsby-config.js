@@ -55,7 +55,6 @@ module.exports = {
       options: {
         trackingId: metaConfig.ga,
         head: true,
-        anonymize: true,
       },
     },
     {

@@ -9,7 +9,7 @@ module.exports = {
       repo: `korECM/blog`,
     },
   },
-  ga: '0', // Google Analytics Tracking ID
+  ga: 'G-G8RQW6862C', // Google Analytics Tracking ID
   author: {
     name: `윤종원`,
     bio: {
