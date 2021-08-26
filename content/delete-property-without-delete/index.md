@@ -1,5 +1,5 @@
 ---
-emoji: ❓
+emoji: ✏️
 title: delete 대신 구조 분해 할당을 사용해서 프로퍼티 지우기
 date: '2021-08-27 01:00:00'
 author: 쿠키
