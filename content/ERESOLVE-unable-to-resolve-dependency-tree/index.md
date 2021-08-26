@@ -103,3 +103,6 @@ npm 3버전부터 npm 6버전까지는 `npm install` 과정에서 `peerDependenc
 
 4. `yarn install`
 내가 블로그로 만드려고 한 [Gatsby Starter](https://github.com/TryGhost/gatsby-starter-ghost)는 `yarn`으로 만들어진 Repo다. readme에서도 `yarn`으로 설치하는 것을 안내하고 있다. `gatsby-cli`가 일괄적으로 `npm install`을 사용하면서 발생한 문제로 보인다. `yarn`으로 설치하면 정상적으로 모듈들이 설치된다.
+
+```toc
+```
