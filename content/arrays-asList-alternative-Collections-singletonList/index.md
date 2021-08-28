@@ -1,11 +1,11 @@
-- - - -
+---
 emoji: ✏️
 title: IntelliJ는 왜 Arrays.asList대신 Collections.singletonList를 추천해줄까?
 date: '2021-08-28 15:00:00'
 author: 쿠키
 tags: Java IntelliJ
 categories: Java IntelliJ
-- - - -
+---
 
 ![](images/2020-12-25-23-53-29.png)
 
