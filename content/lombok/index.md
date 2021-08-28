@@ -3,8 +3,8 @@ emoji: 🌶
 title: Lombok이란?
 date: '2021-08-28 15:00:00'
 author: 쿠키
-tags: Java IntelliJ
-categories: Java IntelliJ
+tags: Java Lombok
+categories: Java
 - - - -
 
 ## Lombok이란?
