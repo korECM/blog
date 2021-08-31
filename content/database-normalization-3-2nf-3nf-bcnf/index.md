@@ -1,5 +1,5 @@
 ---
-emoji: 👮♂
+emoji: 👮‍♂️
 title: 데이터베이스 정규화 이론 3. 2NF, 3NF, BCNF
 date: '2021-08-28 15:00:00'
 author: 쿠키
