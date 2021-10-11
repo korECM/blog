@@ -50,7 +50,7 @@ categories: Javascript/Typescript
 
 우선 점선으로 된 `nextTickQueue`와 `microTaskQueue`는 **이벤트 루프**의 일부가 아니다. 따라서 아래에서 설명하는 내용에 해당되지 않는다. 비록 이벤트 루프를 구성하지는 않지만 `Node.js`의 비동기 작업 관리를 도와주는 것들로 아래에서 더 자세하게 다룬다.
 
-각 **박스**는 특정 작업을 수행하기 위한 **페이즈(Phase)**를 의미한다.그리고 `Node.js`의 이벤트 루프는 
+각 **박스**는 특정 작업을 수행하기 위한 **페이즈**(**Phase**)를 의미한다.그리고 `Node.js`의 이벤트 루프는 
 * `Timer Phase`
 * `Pending Callbacks Phase`
 * `Idle, Prepare Phase`
@@ -60,7 +60,7 @@ categories: Javascript/Typescript
 
 로 구성되어있다. 
 
-페이즈 전환 순서 또한 그림에 나타난 것처럼  `Timer Phase` -> `Pending Callbacks Phase` -> `Idle, Prepare Phase` -> `Poll Phase` -> `Check Phase` -> `Close Callbacks Phase` -> `Timer Phase` 순을 따른다. 이렇게 **한 페이즈**에서 **다음 페이즈**로 넘어가는 것을 **틱(Tick)**이라고 부른다.
+페이즈 전환 순서 또한 그림에 나타난 것처럼  `Timer Phase` -> `Pending Callbacks Phase` -> `Idle, Prepare Phase` -> `Poll Phase` -> `Check Phase` -> `Close Callbacks Phase` -> `Timer Phase` 순을 따른다. 이렇게 **한 페이즈**에서 **다음 페이즈**로 넘어가는 것을 **틱**(**Tick**)이라고 부른다.
 
 각 **페이즈**는 자신만의 **큐**를 **하나**씩 가지고 있는데, 이 큐에는 **이벤트 루프**가 실행해야 하는 작업들이 순서대로 담겨있다. `Node.js`가 **페이즈**에 진입을 하면 이 큐에서 자바스크립트 코드(예를 들면 콜백)를 꺼내서 하나씩 실행한다. 만약 큐에 있는 작업들을 다 실행하거나, **시스템의 실행 한도**에 다다르면 `Node.js`는 **다음 페이즈**로 넘어간다. 
 
@@ -114,8 +114,7 @@ db.query("SELECT * FROM EVENT_LOOP", (err, data) => {
 		console.log(data);
 });
 ```
-`SELECT * FROM EVENT_LOOP`라는 쿼리를 날렸다면 **언젠간** 데이터베이스는 쿼리 결과를 응답해 줄거고 우리는 그 결과를 **콜백**을 통해 받아볼 수 있다. 위 코드의 경우 그 **콜백
-**은 쿼리 결과를 출력하는 함수가 된다.
+`SELECT * FROM EVENT_LOOP`라는 쿼리를 날렸다면 **언젠간** 데이터베이스는 쿼리 결과를 응답해 줄거고 우리는 그 결과를 **콜백**을 통해 받아볼 수 있다. 위 코드의 경우 그 **콜백**은 쿼리 결과를 출력하는 함수가 된다.
 
 ![](images/Node.js-Event-Loop-Execute-Callback-1.png)
 
@@ -162,7 +161,7 @@ db.query("SELECT * FROM EVENT_LOOP", F1);
 * `Q`에서 `F1`를 꺼내서 실행한다.
     * `SELECT * FROM SPRING_BOOT`라는 새로운 쿼리를 날린다
 
-![](images/Node.js-Event-Loop-Execute-Callback-3.png))
+![](images/Node.js-Event-Loop-Execute-Callback-3.png)
 * `Q`에서 `F1`를 꺼내서 실행한다.
     * 콘솔에 쿼리 결과를 출력하기 전에 `SELECT * FROM SPRING_BOOT`의 응답이 와서 `F2` 콜백을 `Q`에 추가한다
     * 콘솔에 `SELECT * FROM EVENT_LOOP` 결과를 출력한다.
@@ -277,7 +276,7 @@ console.log("Hello World");
 #### Timer Phase의 타이머 관리
 현재 시간을 `now`라고 하자. `setTimeout(fn, delay)`가 실행되면 `Node.js`는 타이머를 `min-heap`에 저장한다. 이때 `setTimeout`을 호출한 시간을 `registeredTime`이라고 하자.
 
-`Node.js`가 `Timer Phase`에 진입하면 `min-heap`에서 타이머를 하나 꺼낸다. 그리고 그 타이머에 대해서 `now - registeredTime >= delay` 조건을 검사한다. 만약 만족한다면 타이머를 실행할 준비가 되었으므로 타이머의 **콜백**을 실행한다. 그리고 다시 `min-heap`에서 타이머를 꺼내서 검사한다. 만약 조건이 성립하지 않는다면 ~남은 타이머들을 검사하지 않고~ **다음 페이즈**로 넘어간다. 그 이유는 `min-heap`이 타이머를 **오름차순**으로 관리해 검사할 필요가 없기 때문이다.
+`Node.js`가 `Timer Phase`에 진입하면 `min-heap`에서 타이머를 하나 꺼낸다. 그리고 그 타이머에 대해서 `now - registeredTime >= delay` 조건을 검사한다. 만약 만족한다면 타이머를 실행할 준비가 되었으므로 타이머의 **콜백**을 실행한다. 그리고 다시 `min-heap`에서 타이머를 꺼내서 검사한다. 만약 조건이 성립하지 않는다면 남은 타이머들을 검사하지 않고 **다음 페이즈**로 넘어간다. 그 이유는 `min-heap`이 타이머를 **오름차순**으로 관리해 검사할 필요가 없기 때문이다.
 ![](images/Timer-1.png)
 그림으로 다시 살펴보자. `Node.js`가 `Timer Phase`에 진입하면 `heap`으로부터 **가장 이른 타이머**를 요청한다. `min-heap`은 `O(1)`로 **가장 이른 타이머**를 반환한다. 위 예시에서는 타이머 B가 된다.
 
@@ -419,7 +418,7 @@ static int uv__run_pending(uv_loop_t* loop) {
 #### Poll Phase Blocking
 `Node.js`가 `Poll Phase`에 진입했을 때 기다리고 있는 I/O 요청이 없거나, 아직 응답이 오지 않았다면 어떻게 할까? 그동안 살펴본 `Timer Phase`, `Pending Callbacks Phase`에서는 큐에 실행할 수 있는 작업이 없다면 다음 페이즈로 넘어갔다. 하지만 `Poll Phase`에서는 조금 다르게 동작한다.
 
-페이즈 자신이 관리하는 큐만 확인하고 다음 페이즈로 넘기는 다른 페이즈들과는 달리 `Poll Phase`는 조금 더 영리하게 동작한다. **`Node.js`가 다음 페이즈로 이동해 다시 `Poll Phase`로 올 때까지 ~실행할 수 있는 작업~이 있는지**를 고려한다. 
+페이즈 자신이 관리하는 큐만 확인하고 다음 페이즈로 넘기는 다른 페이즈들과는 달리 `Poll Phase`는 조금 더 영리하게 동작한다. **`Node.js`가 다음 페이즈로 이동해 다시 `Poll Phase`로 올 때까지 실행할 수 있는 작업이 있는지**를 고려한다. 
 
 `Poll Phase`에 진입해 콜백들을 실행해 `watcher_queue`가 비게 된다면, 또는 처음부터 `watcher_queue`가 비어있었다면 `event loop`는 `Poll Phase`에서 **잠시 대기할 수 있다.** 이때 대기하는 시간(`timeout`)은 아래 여러 조건에 의해 결정된다.
 
