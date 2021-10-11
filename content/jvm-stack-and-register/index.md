@@ -15,7 +15,7 @@ categories: Java
 * 함수를 실행하기 위한 콜스택
 * 다음 실행할 명령어를 가리키는 IP(Instruction Pointer)
 * 가상 CPU
-  * Fatch
+  * Fetch
     * IP가 가리키는 명령어를 가져온다
   * Decode
     * 가져온 명령어를 디코드(해석)한다.
