@@ -1,6 +1,6 @@
 ---
 emoji: ✏️
-title: Node.js Event Loop 샅샅이 알아보기
+title: Node.js Event Loop 샅샅이 분석하기
 date: '2021-10-12 02:00:00'
 author: 쿠키
 tags: node javascript typescript
