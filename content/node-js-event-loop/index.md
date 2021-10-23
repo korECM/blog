@@ -6,6 +6,10 @@ author: 쿠키
 tags: node javascript typescript
 categories: Javascript/Typescript
 ---
+## 글에 들어가기에 앞서
+
+`Node.js`의 이벤트 루프의 경우 공식 문서에 설명이 부족하고 이에 따라 여러 사람들이 각자 나름대로 분석한 글이 많아 무엇이 이벤트 루프의 정확한 동작인지 알기 힘듭니다. 혼자 이벤트 루프를 공부해보면서 여러 글들, 공식 문서, 그리고 ` Node.js`의 소스 코드를 참고하면서 내용들을 정리해놓았지만 여전히 이 글에도 틀린 내용이 존재할 수 있습니다. 만약 그런 부분이 보인다면 댓글로 달아주시면 감사하겠습니다.
+
 ## Node.js Event Loop
 
 흔히 `Node.js`를 **싱글 스레드 논 블로킹**이라고 한다. `Node.js`는 **하나의 스레드**로 동작하지만 I/O 작업이 발생한 경우 이를 **비동기적**으로 처리할 수 있다. 
@@ -651,7 +655,8 @@ setTimeout(() => {
 
 이러한 문제를 해소하기 위해서 `Node v11.0.0`에서는 브라우저와 같은 실행 순서를 가지도록 변경되었다.
 
-## 예제
+## Node.js Phase 로깅
+
 각 페이즈에서 어떤 코드들이 실행되는지 쉽게 알기 위해서 공식 `Node.js` 레포에 주석을 추가하고 페이즈 상태에 대한 로깅을 추가했다. 만약 여러 예제 코드를 보면서 각 페이즈에 어떤 코드들이 실행되는지 헷갈린다면 [이 레포](https://github.com/korECM/node)를 클론받아 빌드하면 아래와 같은 실행 결과를 얻을 수 있다. 다만 `Mac OS X`에서만 테스트되었고 다른 환경에서는 정상적으로 로깅되는지 확인하지 못했다.
 ```javascript
 // test.js
@@ -701,8 +706,82 @@ Timer Phase[uv__run_timers] Exit
 ```
 
 
-작성 중
+
+## 예제
+
+```javascript
+setTimeout(() => {
+    console.log("setTimeout")
+}, 0)
+setImmediate(() => {
+    console.log("setImmediate")
+})
+```
+
+대부분의 블로그에서 나오는 예제 코드로 실행할 때마다 출력 결과가 달라지는 예제다.
+
+```shell
+❯ node test.js
+setImmediate
+setTimeout
+❯ node test.js
+setTimeout
+setImmediate
+```
+
+분명 이벤트 루프의 시작은 `Timer Phase` 이고 `setTimtout(fn, 0)`이라 `Timer Phase`서 바로 실행되어야 할 것 같은데 실제 실행 결과는 그렇지 않다. 
+
+우선, `setTimeout(fn, 0)`은 사실 `0ms` 뒤에 콜백을 실행하라는 뜻이 아니다. 실제로는 `1ms` 뒤에 콜백을 실행하라는 뜻과 같다. 즉, `setTimeout(fn, 0) == setTimeout(fn, 1)`이다. 
+
+```c
+// /lib/internal/timers.js
+function Timeout(callback, after, args, isRepeat, isRefed) {
+  after *= 1; // Coalesce to number or NaN
+  if (!(after >= 1 && after <= TIMEOUT_MAX)) {
+    if (after > TIMEOUT_MAX) {
+      process.emitWarning(`${after} does not fit into` +
+                          ' a 32-bit signed integer.' +
+                          '\nTimeout duration was set to 1.',
+                          'TimeoutOverflowWarning');
+    }
+    after = 1; // Schedule on next tick, follows browser behavior
+  }
+	// ...
+}
+```
+
+실제 소스 코드를 살펴보면 위와 같다. 만약 `after`가 1보다 작은 경우 `1`로 설정하는 것을 알 수 있다. 즉, `setTimeout(fn, 0) == setTimeout(fn, 1)`이다.
+
+따라서 만약  `Timer Phase`에 진입했을 때  `1ms` 이상의 시간이 흘렀다면 콜백이 실행될 수 있고 만약  `1ms` 이상의 시간이 흐르지 않았다면 콜백이 실행되지 않고 다음 페이즈로 넘어가게 된다.
+
+![](images/event-loop.png)
+
+위에서 살펴봤듯이 이벤트 루프의 진입점은  `Timer Phase`다. 그리고  `Node.js`는 이벤트 루프를 먼저 생성하고 이벤트 루프 바깥에서 코드를 다 실행하고 이벤트 루프에 진입한다. 
+
+만약 운이 좋아서 이벤트 루프를 생성하고 진입하는데  `1ms`도 안걸렸다면 `Timer Phase`의 콜백은 실행될 수 없다. 따라서 `Check Phase`에 진입해 `setImmediate`를 먼저 출력하고 다시 ` Timer Phase`에 진입해  `setTimeout`을 출력한다.
+
+만약 이벤트 루프를 생성하고 진입하는데  `1ms` 이상의 시간이 걸렸다면 이벤트 루프에 진입하자 마자 `Timer Phase`의 콜백을 실행할 수 있다. 따라서 먼저 `setTimeout`을 출력하고 `Check Phase`에 진입해 `setImmediate`를 출력한다.
+
+그래서 매 실행마다 결과가 달라질 수 있는 것이다.
+
+다른 실행 예제의 경우 다른 글들에 설명이 잘되어 있어 링크로 남기고 마무리한다.
+
+* 한글
+  * https://evan-moon.github.io/2019/08/01/nodejs-event-loop-workflow/
+  * https://blog.naver.com/pjt3591oo/221976414901
+  * https://nodejs.org/ko/docs/guides/event-loop-timers-and-nexttick/#node-js-process-nexttick
+  * https://kay0426.tistory.com/23#footnote_23_3
+* 영어
+  * https://blog.insiderattack.net/promises-next-ticks-and-immediates-nodejs-event-loop-part-3-9226cbe7a6aa
+  * https://stackoverflow.com/questions/40880416/what-is-the-difference-between-event-loop-queue-and-job-queue
+  * https://stackoverflow.com/questions/68613169/in-which-phase-of-nodejs-event-loop-resolved-promises-callbacks-get-executed
+  * https://developer.ibm.com/tutorials/learn-nodejs-the-event-loop/
+  * https://stackoverflow.com/questions/64264617/when-is-process-nexttick-in-the-nodejs-event-loop-called
+
+
+
 ## 출처
+
 * [Node.js 이벤트루프 제대로 이해하기 - 기술블로그](https://tk-one.github.io/2019/02/07/nodejs-event-loop/)
 * [https://stackoverflow.com/questions/40880416/what-is-the-difference-between-event-loop-queue-and-job-queue](https://stackoverflow.com/questions/40880416/what-is-the-difference-between-event-loop-queue-and-job-queue)
 * [https://blog.actorsfit.com/a?ID=00001-994e17b0-071b-45e4-aa90-d345fc5d2acc](https://blog.actorsfit.com/a?ID=00001-994e17b0-071b-45e4-aa90-d345fc5d2acc)
@@ -726,7 +805,7 @@ Timer Phase[uv__run_timers] Exit
 * [로우 레벨로 살펴보는 Node.js 이벤트 루프 | Evans Library](https://evan-moon.github.io/2019/08/01/nodejs-event-loop-workflow/)
 * [https://stackoverflow.com/questions/68613169/in-which-phase-of-nodejs-event-loop-resolved-promises-callbacks-get-executed](https://stackoverflow.com/questions/68613169/in-which-phase-of-nodejs-event-loop-resolved-promises-callbacks-get-executed)
 * [이벤트 루프(Event Loop)란?](https://kay0426.tistory.com/23#footnote_23_3)
-* [node.js node.js의 이벤트루프와 libuv의 이해 : 네이버 블로그](https://m.blog.naver.com/pjt3591oo/221976414901)
+* [node.js node.js의 이벤트루프와 libuv의 이해 : 네이버 블로그](https://blog.naver.com/pjt3591oo/221976414901)
 * [https://stackoverflow.com/questions/46485392/poll-phase-in-nodejs-event-loop](https://stackoverflow.com/questions/46485392/poll-phase-in-nodejs-event-loop)
 * [https://developer.ibm.com/tutorials/learn-nodejs-the-event-loop/](https://developer.ibm.com/tutorials/learn-nodejs-the-event-loop/)
 * [https://stackoverflow.com/questions/64264617/when-is-process-nexttick-in-the-nodejs-event-loop-called](https://stackoverflow.com/questions/64264617/when-is-process-nexttick-in-the-nodejs-event-loop-called)
