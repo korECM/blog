@@ -1,4 +1,5 @@
 @use './variables'as *;
+@import url(https://cdn.jsdelivr.net/gh/tonsky/FiraCode@5.2/distr/fira_code.css);
 
 .markdown .octicon {
   display: inline-block;
@@ -283,7 +284,7 @@
 
 .markdown code,
 .markdown pre {
-  font-family: SFMono-Regular, Consolas, Liberation Mono, Menlo, monospace;
+  font-family: 'Fira Code VF', SFMono-Regular, Consolas, Liberation Mono, Menlo, monospace;
   font-size: 12px;
 }
 
