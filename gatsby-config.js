@@ -75,6 +75,13 @@ module.exports = {
       },
     },
     {
+      resolve: `gatsby-plugin-nprogress`,
+      options: {
+        // Disable the loading spinner.
+        showSpinner: false,
+      },
+    },
+    {
       resolve: `gatsby-transformer-remark`,
       options: {
         plugins: [
@@ -102,13 +109,6 @@ module.exports = {
             options: {
               terminal: "carbon",
               theme: "dracula",
-            },
-          },
-          {
-            resolve: `gatsby-plugin-nprogress`,
-            options: {
-              // Disable the loading spinner.
-              showSpinner: false,
             },
           },
           `gatsby-remark-autolink-headers`,
