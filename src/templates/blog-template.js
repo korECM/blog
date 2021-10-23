@@ -9,6 +9,8 @@ import PostCardsAdjacent from '../components/post-cards-adjacent';
 import Post from '../models/post';
 import PostContent from '../components/post-content';
 import { Utterances } from '../components/utterances';
+import { defineCustomElements as deckDeckGoHighlightElement } from "@deckdeckgo/highlight-code/dist/loader";
+deckDeckGoHighlightElement().then();
 
 export default ({ data }) => {
   const [viewCount, setViewCount] = useState(null);
