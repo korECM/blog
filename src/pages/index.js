@@ -9,6 +9,8 @@ import Tabs from '../components/tabs'
 
 import { getSortedCategoriesByCount } from '../utils/helpers'
 import { Helmet } from 'react-helmet'
+import { defineCustomElements as deckDeckGoHighlightElement } from "@deckdeckgo/highlight-code/dist/loader";
+deckDeckGoHighlightElement().then();
 
 export default ({ data }) => {
     const posts = data.allMarkdownRemark.edges.map(({ node }) => new Post(node))
