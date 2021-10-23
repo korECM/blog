@@ -104,6 +104,13 @@ module.exports = {
               theme: "dracula",
             },
           },
+          {
+            resolve: `gatsby-plugin-nprogress`,
+            options: {
+              // Disable the loading spinner.
+              showSpinner: false,
+            },
+          },
           `gatsby-remark-autolink-headers`,
           `gatsby-remark-copy-linked-files`,
           `gatsby-remark-smartypants`,
