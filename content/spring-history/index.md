@@ -1,6 +1,6 @@
 ---
 emoji: 🍃
-title: Spring이 생긴 이유와 그 생태계
+title: Spring과 Spring Boot
 date: '2021-10-31 23:00:00'
 author: 쿠키
 tags: Spring Java
@@ -16,6 +16,7 @@ categories: Spring
 `Servlet`과 `JSP`를 사용해 이전보다는 비교적 편하게 Presentation 레이어를 구현할 수 있었다. 그러나 그 뒷단에서는 트랜잭션 관리를 하면서 사용자의 요청을 검증하고, 물건의 수량을 체크하면서 멀티 스레드 관리를 하는 코드가 존재할 수 밖에 없었다. 복잡해진 비즈니스 로직과 로우 레벨의 기술적인 구현이 합쳐지면서 점점 개발자가 코드를 작성하는데 부담을 느끼기 시작했고 이런 문제를 해결하기 위해 `EJB`가 등장했다.
 
 > **EJB**는 애플리케이션 개발을 쉽게 만들어준다. 애플리케이션의 개발자는 로우레벨의 기술에 관심을 가질 필요가 없다.
+>
 
 `EJB`가 등장하면서 사람들은 `JSP`와 `Servlet`으로 Presentation 레이어를 구성하고 비즈니스로직은 `EJB`로 구현해나가기 시작했다. 덕분에 개발자들은 복잡한 트랜잭션 관리, SQL 작성 없이 비즈니스 로직 개발에 집중할 수 있었다.
 
@@ -33,7 +34,7 @@ categories: Spring
 
 결국 웹 애플리케이션이 `EJB`에 종속되기 시작했다. 항상 `EJB`의 수많은 요구사항들을 지켜야만 했다. 간단한 DAO를 구현할 때도 DAO의 비즈니스 로직보다 **EJB 컨테이너**들을 위한 코드들이 많아지기 시작했다.
 
-이렇게 비즈니스 로직과 `EJB`가 섞인 비즈니스 객체들은 `EJB` 컨테이너 밖에서 정상적으로 동작하지 않았고 자동화된 테스트도 거의 불가능에 가까웠다. 개발자는 매번 수정-빌드-배포-테스트 사이클을 반복해야만 했다. 벤더사마다 EJB 컨테이너를 구현한 방식이 달라 이미 개발한 서버의 벤더를 변경하는 데도 어려움이 존재했다. 
+이렇게 비즈니스 로직과 `EJB`가 섞인 비즈니스 객체들은 `EJB` 컨테이너 밖에서 정상적으로 동작하지 않았고 자동화된 테스트도 거의 불가능에 가까웠다. 개발자는 매번 수정-빌드-배포-테스트 사이클을 반복해야만 했다. 벤더사마다 EJB 컨테이너를 구현한 방식이 달라 이미 개발한 서버의 벤더를 변경하는 데도 어려움이 존재했다.
 
 가장 큰 문제는 `EJB` 스펙을 따르는 비즈니스 클래스들은 객체지향 설계의 장점들을 포기해야만 했다. `EJB` 스펙을 준수하기 위해 수많은 클래스들을 상속받음에 따라 상속, 다형성의 이점을 누릴 수 없었고 간단한 기능 하나를 개발하기 위해서도 `EJB`에 의존적인 상속과 인터페이스 구현을 해야만 했다.
 
@@ -46,28 +47,28 @@ categories: Spring
 [마틴 파울러, 레베카 파슨스, 조시 맥켄지](https://www.martinfowler.com/bliki/POJO.html)는 2000년 9월에 열렸던 어느 컨퍼런스의 발표를 준비하면서 EJB 대신 단순한 자바 오브젝트에 비즈니스 로직을 구현하면 수많은 장점이 있는데 왜 사람들이 '평범한 자바 오브젝트'를 사용하기 꺼려하는지 의문을 가졌다. 마틴 파울러는 자바의 단순한 오브젝트에 EJB와 같은 그럴듯한 용어가 없기 때문에 사람들이 사용을 주저한다고 생각해 `POJO(Plain Old Java Object)`라는 용어를 만들었고 이 덕분에 많은 개발자들이 `EJB`에 반하는 `POJO`에 열광하게 되었다.
 
 > 이로 인해 EJB 3.0에서는 `POJO`의 장점을 많이 도입하려 했다.
-> 
+>
 
 결국 `POJO(Plain Old Java Object)`란 특정 규약이나 환경, 기술, 그리고 프레임워크에 종속되지 않는 순수한 자바 클래스다. 즉, 아래와 같은 경우는 `POJO`가 아니다.
 
 - 미리 정의된 클래스를 상속받는 경우
-    
+
     ```java
     public class Foo extends javax.servlet.http.HttpServlet {
     ```
-    
+
 - 미리 정의된 인터페이스를 구현하는 경우
-    
+
     ```java
     public class Bar implements javax.ejb.EntityBean {
     ```
-    
+
 - 미리 정의된 애노테이션을 포함하는 경우
-    
+
     ```java
     @javax.persistence.Entity public class Baz
     ```
-    
+
 
 그러나 기술적 어려움 등으로 인해 많은 POJO 프레임워크들은 미리 정의된 애노테이션을 필요로 한다. 따라서 애노테이션이 있는 경우 순수한 POJO라고 할 수는 없다. 그러나 애노테이션은 그 자체만으로는 어떠한 기능도 하지 못하는 수동적인 메타데이터이므로 상속이나 인터페이스 구현 보다는 순수한 POJO에 가깝다.
 
@@ -97,9 +98,9 @@ categories: Spring
 
 ### 제어의 역전(IoC: Inversion of Control) / 의존성 주입(DI: Dependency Injection)
 
-`Spring`은 제어의 역전 지원하는 프레임워크다. 우리가 프레임워크의 API를 호출하는 것이 아니라 프레임워크가 적절한 때에 우리의 코드를 호출해준다. 예를 들어 사용자의 회원 가입 요청이 들어왔을 때 프레임워크는 우리의 회원가입 비즈니스 로직을 호출해준다. 
+`Spring`은 제어의 역전 지원하는 프레임워크다. 우리가 프레임워크의 API를 호출하는 것이 아니라 프레임워크가 적절한 때에 우리의 코드를 호출해준다. 예를 들어 사용자의 회원 가입 요청이 들어왔을 때 프레임워크는 우리의 회원가입 비즈니스 로직을 호출해준다.
 
-우리는 `Spring`이라는 **IoC 경량 컨테이너**에게 우리의 제어권을 넘김으로써 객체의 라이프 사이클 관리, 흐름 제어를 위임시킬 수 있다. 덕분에 우리는 오로지 비즈니스 로직에 집중한 객체를 작성할 수 있다. 
+우리는 `Spring`이라는 **IoC 경량 컨테이너**에게 우리의 제어권을 넘김으로써 객체의 라이프 사이클 관리, 흐름 제어를 위임시킬 수 있다. 덕분에 우리는 오로지 비즈니스 로직에 집중한 객체를 작성할 수 있다.
 
 `Spring`은 `DI`를 이용해 의존성 역전을 통해 `IoC`를 달성한다. 만약 어떤 비즈니스 로직을 처리하기 위해서 다른 객체가 필요하다면 그 객체를 생성하는 대신 우리는 `Spring`에게 그 객체를 요청할 수 있다. 즉, 어떤 비즈니스 로직을 처리하기 위한 다른 객체의 **의존성을 주입**받을 수 있다.
 
@@ -117,9 +118,22 @@ categories: Spring
 
 `Spring`을 사용하면 특정 환경이나 서버, 특정 기술에 종속적이지 않고 이식성이 뛰어난 애플리케이션을 개발할 수 있다. 이를 가능하게 해주는 것이 바로 서비스 추상화다. 다르게 생각하면 기존 코드를 거의 변경하지 않고도 다른 기술 스택으로 전환할 수 있다.
 
-예를 들어 트랜잭션 기능을 지원하기 위해 `@Transactional` 애노테이션을 사용한다고 했을 때 우리는 데이터베이스에 종속되지 않은 채로 트랜잭션 기능을 사용할 수 있다. `MySQL`을 사용하다가 `PostgreSQL`을 사용하더라도 우리의 서비스 객체에 적용되었던 트랜잭션 기능을 수정할 필요가 없다. 이는 `Spring`의 서비스 추상화 덕분이다.
+예를 들어 트랜잭션 기능을 지원하기 위해 `@Transactional` 애노테이션을 사용한다고 했을 때 우리는 데이터베이스에 종속되지 않은 채로 트랜잭션 기능을 사용할 수 있다.
+
+`MySQL`을 사용하다가 `PostgreSQL`을 사용하더라도 우리의 서비스 객체에 적용되었던 트랜잭션 기능을 수정할 필요가 없다. 이는 `Spring`의 서비스 추상화 덕분이다.
 
 ## Spring Boot
+
+`Spring`은 이전에도 많이 사용되는 프레임워크였지만 `Spring boot`가 등장하고 난뒤 더욱 편하게 사용할 수 있는 강력한 프레임워크가 되었다. 공식 홈페이지에서 `Spring boot`를 어떻게 소개하고 있는지 확인해보자.
+
+> Spring Boot makes it easy to create stand-alone, production-grade Spring based Applications that you can "just run".
+We take an opinionated view of the Spring platform and third-party libraries so you can get started with minimum fuss. Most Spring Boot applications need minimal Spring configuration.
+
+`Spring boot`는 즉시 단독으로 실행할 수 있는 프로덕션 수준의 스프링 애플리케이션을 쉽게 만들 수 있게 해줍니다.
+우리는 Spring 플랫폼과 써드 파티 라이브러리에서 널리 쓰이는 설정들을 모아 제공하기 때문에 거의 불편함 없이 시작할 수 있습니다. 대부분의 `Spring Boot` 애플리케이션들은 최소한의 설정만을 필요로 합니다.
+>
+
+실제로 `Spring boot`는 공식 홈페이지에서 크게 6가지 기능을 이야기하고 있다. 그 중 중요한 내용들을 하나씩 알아보자
 
 ### 자동 설정(Auto Configuration)
 
@@ -171,7 +185,7 @@ public class ThymeleafViewResolverConfig {
 implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
 ```
 
-이 덕분에 기존에 개발자가 하나하나 `bean`을 등록하고 설정할 필요가 없어졌다. 
+이 덕분에 기존에 개발자가 하나하나 `bean`을 등록하고 설정할 필요가 없어졌다.
 
 ### Starter 모듈을 통한 의존성 관리
 
@@ -189,7 +203,7 @@ implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
 
 그 대신, `spring-boot-starter-web` 모듈 하나만 추가하면 종속성이나 호환성 걱정 없이 필요한 모든 모듈을 사용할 수 있다.
 
-만약 `JPA`를 사용한다면 `spring-boot-starter-data-jpa`를 추가하면 된다. 
+만약 `JPA`를 사용한다면 `spring-boot-starter-data-jpa`를 추가하면 된다.
 
 즉, `spring-boot`에서 특정 목적에 필요한 의존성들을 `starter` 모듈로 모아놓음으로써 편하게 의존성 관리를 할 수 있다.
 
@@ -207,11 +221,11 @@ implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
 
 기존에는 `Spring` 프로젝트를 `WAR`로 빌드하고 이를 `Tomcat`과 같은 `WAS`에 배포해야만 했다. 즉, `Spring` 프로젝트를 독립적으로 실행할 수 없었다.
 
-그러나 `Spring Boot`는 `Tomcat`이나 `Jetty` 등을 내장함으로써 독립적으로 실행 가능한 `JAR` 파일로 배포할 수 있다.
+그러나 `Spring Boot`는 `Tomcat`이나 `Jetty`, `Undertow` 등을 내장함으로써 독립적으로 실행 가능한 `JAR` 파일로 배포할 수 있다.
 
 ### Spring Boot Actuator
 
-`spring-boot-starter-actuator` 의존성을 추가하기만 하면 HTTP 엔드포인트나 `JMX`를 사용해서 현재 애플리케이션의 상태를 모니터링 할 수 있다. 
+`spring-boot-starter-actuator` 의존성을 추가하기만 하면 HTTP 엔드포인트나 `JMX`를 사용해서 현재 애플리케이션의 상태를 모니터링 할 수 있다.
 
 Applicaiton Context에 구성되어 있는 Bean을 확인하거나 최근 HTTP 요청, CPU나 메모리 상태, 가비지 콜렉션, 현재 환경 변수 등을 확인할 수 있다. 구체적으로 어떤 내용을 확인할 수 있는 지는 [공식 문서](https://docs.spring.io/spring-boot/docs/2.1.8.RELEASE/reference/html/production-ready-endpoints.html#production-ready-endpoints-enabling-endpoints)에서 확인할 수 있다.
 
