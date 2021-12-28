@@ -9,10 +9,10 @@ import Tabs from '../components/tabs'
 
 import { getSortedCategoriesByCount } from '../utils/helpers'
 import { Helmet } from 'react-helmet'
-import { defineCustomElements as deckDeckGoHighlightElement } from "@deckdeckgo/highlight-code/dist/loader";
-deckDeckGoHighlightElement().then();
+import { loadCodeHighlight } from '../utils/loadCodeHighlight'
 
 export default ({ data }) => {
+    loadCodeHighlight()
     const posts = data.allMarkdownRemark.edges.map(({ node }) => new Post(node))
     const { author, language } = data.site.siteMetadata
     const categories = ['All', ...getSortedCategoriesByCount(posts)]

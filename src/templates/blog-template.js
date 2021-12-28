@@ -9,10 +9,11 @@ import PostCardsAdjacent from '../components/post-cards-adjacent';
 import Post from '../models/post';
 import PostContent from '../components/post-content';
 import { Utterances } from '../components/utterances';
-import { defineCustomElements as deckDeckGoHighlightElement } from "@deckdeckgo/highlight-code/dist/loader";
-deckDeckGoHighlightElement().then();
+import { loadCodeHighlight } from '../utils/loadCodeHighlight'
 
 export default ({ data }) => {
+  loadCodeHighlight()
+
   const [viewCount, setViewCount] = useState(null);
 
   const curPost = new Post(data.cur);
