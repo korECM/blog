@@ -38,7 +38,7 @@ AWS Beanstalk의 경우 [이동욱님의 블로그](https://jojoldu.tistory.com/
 
 ![](assets/image.png)
 먼저 AWS ECS 서비스에 들어가서 **클러스터 생성**을 눌러줍니다.
-![](assets/image%203.png)
+![](assets/image 3.png)
 클러스터 이름과 VPC는 상황에 맞게 설정해 줍니다. 이 글에서는 클러스터 이름으로 **nGrinder**을 사용하고 VPC의 경우 데모이므로 기본 VPC를 사용합니다. 
 ![](assets/image%202.png)
 인프라의 경우 이 글에서는 AWS Fargate를 사용하므로 EC2나 외부 인스턴스를 체크하지 않습니다. **생성** 버튼을 눌러서 클러스터를 생성합니다.
@@ -272,7 +272,8 @@ nGrinder 클러스터에서 agent 서비스를 선택하고 **업데이트 버�
 ![](assets/image%2063.png)
 ![](assets/image%2064.png)
 원하는 Agent 수만큼 **작업 개수**를 설정하고 **Skip to review** 버튼을 누르고 **서비스 업데이트 버튼** 을 눌러줍니다.
-![](assets/image%2065.png)조금 기다리면 `10`개라는 작업 개수를 맞추기 위해서 `8`개의 새로운 Agent가 실행되는 것을 확인할 수 있습니다.
+![](assets/image%2065.png)
+조금 기다리면 `10`개라는 작업 개수를 맞추기 위해서 `8`개의 새로운 Agent가 실행되는 것을 확인할 수 있습니다.
 ![](assets/image%2066.png)
 nGrinder 에이전트 관리에서도 수분 내로 10개의 Agent가 연결되는 것을 확인할 수 있습니다.
 

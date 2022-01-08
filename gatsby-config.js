@@ -84,6 +84,7 @@ module.exports = {
               maxWidth: 900,
               linkImagesToOriginal: false,
               backgroundColor: 'transparent',
+              withWebp: true,
             },
           },
           {
