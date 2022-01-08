@@ -13,7 +13,7 @@ categories: AWS
 ## nGrinder?
 [nGrinder](https://naver.github.io/ngrinder/ "")는 Naver에서 제공하는 성능 테스트 툴입니다. 직관적인 UI/UX로 많은 회사에서 사용하고 있는 성능 테스트 툴이지만 직접 구축해서 사용해야 합니다.
 
-![](assets/Architecture-29bb2.png)
+![](images/Architecture-29bb2.png)
 nGrinder는 웹 기반의 GUI를 제공해 성능 테스트를 시작하고, 결과를 확인할 수 있는 **Controller**와 성능 테스트를 진행할 때 Controller의 요청에 따라 실제 서버에 부하를 발생시키는 **Agent**로 구성되어있습니다. 위 그림에서 알 수 있듯이 **Controller**는 하나의 서버에만 구축해도 되지만 **Agent**는 큰 부하를 발생시키기 위해서 **여러 개의 서버**에 구축해야 합니다.
 
 > 이 글에서는 다루지 않지만 성능 테스트의 대상이 되는 서버에 설치하는  **Monitor**도 있습니다. Monitor는 성능 테스트를 진행하는 동안 타겟 서버의 CPU, 메모리 등을 확인할 수 있게 해줍니다. 다만 Monitor를 설치하지 않아도 성능 테스트는 진행할 수 있으므로 이 글에서는 다루지 않습니다.
@@ -36,13 +36,13 @@ AWS Beanstalk의 경우 [이동욱님의 블로그](https://jojoldu.tistory.com/
 
 클러스터는 ECS의 가장 기본적인 단위로 **서비스**나 **태스크**가 실행되는 곳이라고 생각하면 됩니다. 우리는 **Controller 서비스**와 **Agent 서비스**를 클러스터에 배포해서 nGrinder 환경을 구축한다고 생각하면 됩니다.
 
-![](assets/image.png)
+![](images/image.png)
 먼저 AWS ECS 서비스에 들어가서 **클러스터 생성**을 눌러줍니다.
-![](assets/image_3.png)
+![](images/image_3.png)
 클러스터 이름과 VPC는 상황에 맞게 설정해 줍니다. 이 글에서는 클러스터 이름으로 **nGrinder**을 사용하고 VPC의 경우 데모이므로 기본 VPC를 사용합니다. 
-![](assets/image_2.png)
+![](images/image_2.png)
 인프라의 경우 이 글에서는 AWS Fargate를 사용하므로 EC2나 외부 인스턴스를 체크하지 않습니다. **생성** 버튼을 눌러서 클러스터를 생성합니다.
-![](assets/image_4.png)
+![](images/image_4.png)
 조금 기다리면 클러스터가 생성됩니다. 이제 이 클러스터에 **서비스**를 배포하기 위해서 **작업 정의**를 생성해야 합니다.
 
 ## Controller 구축
@@ -54,10 +54,10 @@ AWS Beanstalk의 경우 [이동욱님의 블로그](https://jojoldu.tistory.com/
 
 따라서 Controller 태스크와 Agent 태스크를 실행하기 위해서 각각의 태스크 정의를 생성해야 합니다.
 ### 태스크 정의 생성
-![](assets/image_5.png)
-![](assets/image_6.png)
+![](images/image_5.png)
+![](images/image_6.png)
 왼쪽 사이드 바에서 태스크 정의 메뉴를 누르고 새 태스크 정의 생성을 누릅니다.
-![](assets/image_7.png)
+![](images/image_7.png)
 태스크 정의 패밀리의 이름이나 컨테이너 이름은 원하는 이름을 적어주면 됩니다. 이 글에서는 클러스터 이름이 이미 **ngrinder**이므로 **controller**라는 이름을 사용합니다.
 
 컨테이너 이미지 URI의 경우 ngrinder에서 공식적으로 제공하는 Controller 이미지인 `ngrinder/controller`를 사용합니다.
@@ -66,14 +66,14 @@ Controller의 경우 웹 페이지를 위한 `80` 포트, Agent가 접속하는 
 
 환경 변수는 별도로 설정하지 않아도 됩니다.
 
-![](assets/image_8.png)
+![](images/image_8.png)
 이 글에서는 AWS Fargate를 사용하므로 **AWS Fargate(서버리스)** 를 선택합니다. 운영체제는 당연히 **Linux/X86_64**를 사용합니다.
 
 태스크 크기의 경우 이 글에서는 **2vCPU**와 **4 GB**의 메모리를 사용하지만 이는 최적화된 값이 아닐 수 있습니다. 이 값은 언제든지 태스크 정의의 새로운 개정을 생성하면서 수정할 수 있으므로 성능 테스트를 하면서 적절한 값을 찾아서 설정하면 됩니다.
 
 태스크 역할은 따로 부여하지 않으며 네트워크 모드는 AWS Fargate를 사용하므로 **awsvpc**를 사용하게 됩니다. 스토리지 또한 별도로 설정하지 않습니다.
 
-![](assets/image_9.png)
+![](images/image_9.png)
 모니터링 및 로깅의 경우 원하는 대로 설정하면 됩니다. 이 글에서는 **Amazon CloudWatch를 통한 로그 수집**만 사용합니다.
 
 이렇게 모든 설정을 마친 뒤에 **생성 버튼**을 눌러주면 Controller에 대한 태스크 정의가 만들어집니다.
@@ -81,24 +81,24 @@ Controller의 경우 웹 페이지를 위한 `80` 포트, Agent가 접속하는 
 ### 보안 그룹 생성
 이 뒤에서 Controller를 외부에서 고정된 IP로 접속할 수 있게하기 위해서 로드 밸런서를 연결해야 합니다. 이 과정에서 보안 그룹을 설정해야 하는데 필요할 때 만드는 것보다 한번에 만들어놓고 연결하는 것이 편하니 먼저 보안 그룹을 생성하고 로드 밸런서를 생성하겠습니다.
 
-![](assets/image_16.png)
-![](assets/image_17.png)
+![](images/image_16.png)
+![](images/image_17.png)
 EC2의 보안 그룹으로 이동해 **보안 그룹 생성** 버튼을 눌러줍니다.
-![](assets/image_18.png)
+![](images/image_18.png)
 먼저 Agent의 보안 그룹을 생성합니다. 이름이나 설명은 원하는 내용을 적으면 되며 이 글에서는 **nGrinder-agent-sg**를 사용합니다.
 
 VPC의 경우 nGrinder 클러스터를 만들 때 사용했던 값을 사용합니다.
 
 Agent의 경우 Controller나 Target에 연결할뿐 사용자 또는 다른 서버에서 Agent에 접속할 일이 없으므로 인바운드 규칙은 설정하지 않습니다. 아웃바운드 규칙의 경우 기본적으로 설정되어 있는 값을 사용합니다.
 
-![](assets/image_19.png)
+![](images/image_19.png)
 그 다음으로 Controller의 보안 그룹을 생성합니다. 여기서는 **nGrinder-controller-sg**라는 이름을 사용합니다. VPC 또한 nGrinder 클러스터의 VPC를 사용하면 됩니다.
 
 인바운드 규칙의 경우 Controller 태스트 정의를 만들 때처럼 80, 12000-12000+, 16001 포트를 열어야 합니다. 이때 `80` 포트는 외부 사용자가 접속할 수 있도록 모든 IP에 대해서 열어주고 `12000~12000+`, `16001` 포트는 Agent가 Controller에 접속하는 포트이므로 위에서 생성한 Agent 보안 그룹(nGrinder-agent-sg)에 대해서만 열어줍니다.
 
 아웃바운드 규칙의 경우 기본적으로 설정되어 있는 값을 사용합니다.
 
-![](assets/image_20.png)
+![](images/image_20.png)
 그 다음으로 Controller에 연결할 로드 밸런서의 보안 그룹을 생성합니다. 여기서는 **nGrinder-lb-sg**라는 이름을 사용합니다. VPC 또한 nGrinder 클러스터의 VPC를 사용하면 됩니다.
 
 인바운드 규칙의 경우 `80` 포트만 외부 사용자가 접속할 수 있도록 모든 IP에 대해서 열어줍니다.
@@ -107,42 +107,42 @@ Agent의 경우 Controller나 Target에 연결할뿐 사용자 또는 다른 서
 ### 로드 밸런서 생성
 Controller의 경우 성능 테스트를 위한 웹 GUI를 제공합니다. Controller의 IP는 매 배포때마다 달라지므로 이를 하나의 단일된 엔드포인트로 제공하기 위해서 **로드 밸런서**를 사용할 수 있습니다.
 
-![](assets/image_11.png)
-![](assets/image_12.png)
+![](images/image_11.png)
+![](images/image_12.png)
 EC2 서비스 안에 있는 로드 밸런서로 이동해 **로드 밸런서 생성 버튼**을 눌러줍니다.
 
-![](assets/image_13.png)
+![](images/image_13.png)
 AWS는 3가지의 로드 밸런서를 제공합니다. 여기서는 **Application Load Balancer**를 사용합니다. Application Load Balancer 아래 있는 **Create 버튼**을 눌러줍니다.
 
-![](assets/image_14.png)
+![](images/image_14.png)
 이름은 원하는 이름을 설정하면 됩니다. 여기서는 **nGrinder-lb**라는 이름을 사용합니다.
 
 이 로드 밸런서는 외부 사용자가 접속할 수 있어야 하므로 **Internet-facing**을 선택합니다. IP address type의 경우 **IPv4**를 사용합니다.
 
-![](assets/image_15.png)
+![](images/image_15.png)
 VPC와 서브넷의 경우 nGrinder 클러스터를 생성할 때 설정한 값을 사용하면 됩니다.
 
-![](assets/image_22.png)
+![](images/image_22.png)
 보안 그룹은 아까 생성한 로드 밸런서 보안 그룹(`nGrinder-lb-sg`)을 연결해 줍니다.
 
-![](assets/image_21.png)
+![](images/image_21.png)
 리스너의 경우 여기서 생성하는 리스너를 사용하지 않을 거지만 연결하지 않으면 로드 밸런서를 생성할 수 없으므로 우선 의미없는 리스너를 만들고 로드 밸런서를 생성한 뒤에 지워줄 겁니다.
 
 리스너에는 타겟 그룹을 연결해야 하므로 **Create target group** 링크를 눌러 타겟 그룹을 생성합니다.
 
-![](assets/image_23.png)
+![](images/image_23.png)
 어차피 지울 타겟 그룹이므로 **Target group name**에 아무런 값을 채운 후 타겟 그룹을 생성합니다.
 
-![](assets/image_24.png)
+![](images/image_24.png)
 타겟 그룹에 포함될 인스턴스 또한 없으므로 **Create target group** 버튼을 눌러줍니다.
-![](assets/image_25.png)
+![](images/image_25.png)
 그리고 로드 밸런서에서 방금 만든 타겟 그룹을 연결합니다.
 
-![](assets/image_26.png)
+![](images/image_26.png)
 그리고 **Create load balancer** 버튼을 눌러 로드 밸런서를 생성합니다.
-![](assets/image_27.png)
+![](images/image_27.png)
 생성한 로드 밸런서의 리스너 메뉴로 들어가 방금 만든 리스너를 **삭제**합니다.
-![](assets/image_28.png)
+![](images/image_28.png)
 또한 타겟 그룹 메뉴에 들어가 만든 타겟 그룹을 선택하고 **Actions** 메뉴를 누른 뒤 **Delete** 버튼을 눌러 타겟 그룹을 삭제합니다.
 
 ### 서비스 생성
@@ -152,29 +152,29 @@ VPC와 서브넷의 경우 nGrinder 클러스터를 생성할 때 설정한 값�
 
 > 이후에 Agent의 태스크 정의를 생성할 때 컨테이너가 실행될 때 설정하는 커맨드를 설정하는데 이 옵션 또한 새로운 콘솔 환경에서 사라져 이 뒤 모든 작업은 구형 콘솔에서 진행합니다.
 
-![](assets/image_10.png)
+![](images/image_10.png)
 왼쪽 사이드 바에서 **새로운 ECS 환경** 버튼을 클릭해 이전 콘솔 환경으로 전환합니다.
-![](assets/image_29.png)
+![](images/image_29.png)
 우리가 아까 생성했던 nGrinder 클러스터어 들어가서 서비스에 있는 **생성** 버튼을 눌러줍니다.
 
-![](assets/image_30.png)
+![](images/image_30.png)
 시작 유형으로 **FARGATE**를 선택하고 운영 체제 패밀리는 **Linux**를 사용합니다. 작업 정의의 경우 우리가 아까 생성한 **controller**를 선택하면 됩니다.
-![](assets/image_31.png)
+![](images/image_31.png)
 클러스터는 우리가 만든 **nGrinder 클러스터**를 선택하고 서비스 이름은 원하는 이름을 설정합니다. 여기서는 **controller**라는 이름을 사용합니다.
 
 controller는 태스크를 1개만 실행할 것이므로 1로 설정하면 됩니다. 
 
-![](assets/image_32.png)
+![](images/image_32.png)
 배포 유형의 경우 무중단 배포를 하기 위해서 **블루/그린 배포**를 선택해도 되지만 여기서는 **롤링 업데이트**를 사용합니다.
-![](assets/image_33.png)
+![](images/image_33.png)
 VPC와 서브넷은 Conroller를 배포할 VPC와 서브넷을 선택하면 됩니다. 보안 그룹은 아까 만든 Controller의 보안 그룹(`nGrinder-controller-sg`)을 선택합니다. 자동 할당 퍼블릭 IP는 **ENABLED**를 선택합니다.
-![](assets/image_34.png)
+![](images/image_34.png)
 로드 밸런서는 아까 만든 **nGrinder-lb**를 선택합니다.
-![](assets/image_35.png)
+![](images/image_35.png)
 컨테이너와 로드 밸런서를 연결하기 위해 **컨트롤러의 80 포트**를 선택한 뒤에 **로드 밸런서에 추가** 버튼을 누릅니다.
-![](assets/image_36.png)
+![](images/image_36.png)
 리스너 포트의 경우 **새로 생성**을 선택하고 포트는 80 포트를 사용하며 대상 그룹 이름은 적당한 이름을 사용하면 됩니다. 여기서는 **nGrinder-controller-tg**를 사용합니다.
-![](assets/image_37.png)
+![](images/image_37.png)
 Agent가 Controller를 새로 배포해도 자동으로 연결할 수 있도록 **서비스 검색 통합 활성화** 버튼을 눌러줍니다. 네임 스페이스의 경우 **새로운 프라이빗 네임스페이스 생성**을 선택하고 네임스페이스 이름은 적당한 값을 사용합니다. 여기서는 **ngrinder**라는 값을 사용합니다.
 
 새로운 서비스 검색 서비스를 등록하는 것이므로 **새로운 서비스 검색 서비스 생성**을 선택하고 서비스 검색 이름에는 **컨트롤러를 나타낼 수 있는 이름**을 사용하면 됩니다. 여기서는 **controller**라는 값을 사용합니다.
@@ -184,20 +184,20 @@ DNS 레코드 유형의 경우 `A` 타입을 사용하고 TTL은 적당한 값�
 이렇게 서비스 검색을 설정하면 Controller를 새로 배포하더라도 Agent 설정 수정 없이 Agent가 새로운 Controller에 연결할 수 있습니다. 
 **서비스 검색 통합 활성화**를 사용하면 **DNS**를 통해 Controller의 IP를 얻을 수 있습니다. 이 DNS는 `{서비스 검색 이름}.{네임스페이스 이름}` 형태로 생성되는데 이 값을 Agent 태스크 정의를 만들 때 사용하므로 기억해둬야 합니다. 여기서는 `controller.ngrinder`가 됩니다.
 
-![](assets/image_38.png)
+![](images/image_38.png)
 오토 스케일링은 사용하지 않습니다. 이후에 **서비스 생성** 버튼을 누르면 Controller 서비스가 생성됩니다.
 
-![](assets/image_39.png)
+![](images/image_39.png)
 클러스터의 작업 목록에서 `controller` 작업이 실행되고 있는 것을 확인할 수 있습니다.
-![](assets/image_41.png)
+![](images/image_41.png)
 조금 기다리면 `RUNNING` 상태로 바뀌고 아까 만든 로드밸런서의 DNS로 nGrinder에 접속할 수 있습니다.
 
-![](assets/image_40.png)
+![](images/image_40.png)
 
 로드 밸런서가 nGrinder로 헬스 체크를 하는 과정에서 기본 URL `/`로 요청을 하면 `302` 응답을 줘서 헬스 체크에 실패하는 경우가 있습니다. 이런 경우 ECS는 태스크 실행에 실패한 것으로 보고 태스크 재시작을 반복하게 됩니다. 타겟 그룹 설정을 변경하면 됩니다.
-![](assets/image_42.png)
+![](images/image_42.png)
 아까 만든 타겟 그룹의 Health checks 설정에 가서 **Edit** 버튼을 누른 뒤
-![](assets/image_43.png)
+![](images/image_43.png)
 Success codes에 `302` 코드를 추가하면 됩니다.
 
 ## Agent 구축
@@ -205,76 +205,76 @@ Success codes에 `302` 코드를 추가하면 됩니다.
 ### 태스크 정의 생성
 > 새로운 콘솔 환경에서 컨테이너 커맨드 설정이 사라져서 구 콘솔 환경에서 진행합니다.
 
-![](assets/image_44.png)
+![](images/image_44.png)
 작업 정의애서 **새 작업 정의 생성** 버튼을 누르면 태스크 정의 생성을 시작할 수 있습니다.
-![](assets/image_45.png)
+![](images/image_45.png)
 우리는 Fargate를 사용하므로 **FARGATE**를 선택하고 다음 단계로 넘어갑니다.
-![](assets/image_46.png)
+![](images/image_46.png)
 태스크 정의 이름은 적당한 이름을 설정하면 되며 이 글에서는 **agent**를 사용합니다.
 
 태스크 역할은 **없음**을 선택하고 운영 체제 패밀리는 **Linux**를 선택합니다.
-![](assets/image_47.png)
+![](images/image_47.png)
 **작업 실행 역할**의 경우 Controller 태스크 정의를 생성할 때 자동으로 생성된 `ecsTaskExecutionRole`를 사용하면 됩니다. 만약 `ecsTaskExecutionRole`가 없다면 **새 역할 생성**을 선택합니다.
 
 작업 메모리는 **6GB**, 작업 CPU는 **2 vCPU**를 사용합니다. 이 또한 최적의 값이 아닐 수 있으며 언제든지 수정할 수 있으므로 나중에 원한다면 수정하면 됩니다.
-![](assets/image_48.png)
+![](images/image_48.png)
 컨테이너 정의에서 Agent 이미지를 추가하기 위해 **컨테이너 추가**를 누릅니다.
-![](assets/image_49.png)
+![](images/image_49.png)
 컨테이너 이름은 적당한 이름을 설정하면 되며 이 글에서는 **agent**를 사용합니다. 이미지의 경우 ngrinder에서 제공하는 `ngrinder/agent`를 사용합니다.
 
 Controller와 달리 Agent는 외부에서 Agent로 접속하지 않으므로 포트 매핑은 하지 않습니다.
-![](assets/image_50.png)
+![](images/image_50.png)
 아래 **환경** 메뉴에서 **명령**에 아까 Controller 서비스를 생성할 때 **서비스 검색**을 활성화하면서 생성한 **DNS**를 적어줘야 Agent가 Controller에 연결할 수 있습니다. 위에서 말했듯이 DNS는 `{서비스 검색 이름}.{네임스페이스 이름}` 형태로 생성되며 이 글에서는 `controller.ngrinder`가 됩니다. 그래서 **명령**에 `DNS:포트번호`를 적어주면 되는데 이 글에서는 `controller.ngrinder:80`가 됩니다.
 
 나머지 설정은 건드릴 부분이 없으므로 **추가** 버튼을 눌러 컨테이너를 추가해 줍니다.
 그리고 **생성** 버튼을 눌러 Agent의 태스크 정의를 생성을 완료합니다.
 
 ### 서비스 생성
-![](assets/image_51.png)
+![](images/image_51.png)
 다시 nGrinder 클러스터로 이동해 서비스 메뉴에 있는 **생성 버튼**을 눌러 서비스 생성을 시작합니다.
-![](assets/image_52.png)
+![](images/image_52.png)
 시작 유형으로 **FARGATE**를 선택하고 작업 정의에서 방금 만든 **agent**를 선택합니다.
-![](assets/image_53.png)
+![](images/image_53.png)
 클러스터는 **nGrinder 클러스터**를 사용하고 서비스 이름은 적절한 이름을 사용하면 됩니다. 이 글에서는 **agent**를 사용합니다.
 
 Agent는 Controller와 달리 여러 개의 태스크가 뜰 수 있으므로 작업 개수에 **2**를 설정합니다. 더 많은 Agent를 사용하고 싶다면 원하는 Agent 개수를 적어주면 됩니다.
 
-![](assets/image_54.png)
+![](images/image_54.png)
 Agent는 외부와 연결되지 않으므로 **롤링 업데이트**를 사용합니다.
 
-![](assets/image_55.png)
+![](images/image_55.png)
 VPC와 서브넷은 Conroller를 배포할 VPC와 서브넷을 선택하면 됩니다. 보안 그룹은 아까 만든 Controller의 보안 그룹(`nGrinder-agent-sg`)을 선택합니다. 자동 할당 퍼블릭 IP는 **ENABLED**를 선택합니다.
-![](assets/image_56.png)
+![](images/image_56.png)
 Agent는 외부와 연결되지 않으므로 로드 밸런서와 연결하지 않습니다.
-![](assets/image_57.png)
+![](images/image_57.png)
 Agent도 **서비스 검색 통합 활성화**를 활성화합니다. 네임스페이스는 Controller 서비스를 생성할 때 생성한 **ngrinder** 네임스페이스를 사용합니다. 서비스 검색 이름의 경우 적절한 이름을 설정하면 되는데 이 글에서는 **agent**를 사용합니다. DNS 레코드 유형의 경우 `A` 타입을 사용하고 TTL은 적당한 값을 사용하면 됩니다. 여기서는 60초를 사용합니다.
 
 결국 이 설정에 따르면 Agent는 `agent.ngrinder`라는 DNS로 접근할 수 있습니다만 이를 사용하지는 않습니다. **서비스 검색**은 Agent가 Controller에 연결하기 위해서만 사용합니다.
 
-![](assets/image_58.png)
+![](images/image_58.png)
 원한다면 오토 스케일링을 활성화해도 되지만 이 글에서는 사용하지 않습니다.
 
 이후 **서비스 생성** 버튼을 눌러 Agent 서비스를 생성합니다.
 
-![](assets/image_59.png)
+![](images/image_59.png)
 2개의 Agent 태스크가 실행되는 모습을 확인할 수 있습니다. 이후 마지막 상태가 `RUNNING`으로 바뀌면 nGrinder 웹 페이지에 접속해 Agent가 연결되었는지 확인하면 됩니다.
 
 ### 확인
-![](assets/image_60.png)
+![](images/image_60.png)
 nGrinder 웹 페이지에 접속하면 **에이전트 관리**에서 연결된 Agent를 확인할 수 있습니다.
-![](assets/image_61.png)
+![](images/image_61.png)
 정상적으로 Controller에 Agent가 연결된 것을 확인할 수 있습니다.
 
 ## Agent 스케일링
 만약 Agent 서버의 개수를 조정하고 싶다면 클러스터의 서비스 설정에서 조정할 수 있습니다.
-![](assets/image_62.png)
+![](images/image_62.png)
 nGrinder 클러스터에서 agent 서비스를 선택하고 **업데이트 버튼**을 눌러줍니다. 참고로 현재 실행중인 작업의 개수는 `2`인 것을 확인할 수 있습니다.
-![](assets/image_63.png)
-![](assets/image_64.png)
+![](images/image_63.png)
+![](images/image_64.png)
 원하는 Agent 수만큼 **작업 개수**를 설정하고 **Skip to review** 버튼을 누르고 **서비스 업데이트 버튼** 을 눌러줍니다.
-![](assets/image_65.png)
+![](images/image_65.png)
 조금 기다리면 `10`개라는 작업 개수를 맞추기 위해서 `8`개의 새로운 Agent가 실행되는 것을 확인할 수 있습니다.
-![](assets/image_66.png)
+![](images/image_66.png)
 nGrinder 에이전트 관리에서도 수분 내로 10개의 Agent가 연결되는 것을 확인할 수 있습니다.
 
 ## 정리
