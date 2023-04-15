@@ -24,9 +24,9 @@ const PageHeader = ({ siteTitle }) => {
                 </Link>
               </div>
               <div className="trailing-section">
-                <Link className="link" to="/about">
-                  about
-                </Link>
+                <a className="link" href="https://korecm.oopy.io">
+                  Resume
+                </a>
                 <Link className="link" to="/posts">
                   posts
                 </Link>

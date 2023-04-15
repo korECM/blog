@@ -21,6 +21,7 @@ module.exports = {
       github: `https://github.com/korECM`,
       linkedIn: `https://www.linkedin.com/in/jongwon-youn-4389a4197`,
       email: `eatingcookieman@gmail.com`,
+      resume: `https://korecm.oopy.io`
     },
   },
 

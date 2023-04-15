@@ -8,6 +8,7 @@ import GitHubIcon from '@material-ui/icons/GitHub';
 import AndroidIcon from '@material-ui/icons/Android';
 import AppleIcon from '@material-ui/icons/Apple';
 import LinkedInIcon from '@material-ui/icons/LinkedIn';
+import AssignmentIcon from '@material-ui/icons/Assignment';
 
 import './style.scss';
 
@@ -29,6 +30,8 @@ const IconButtonBar = ({ links = {} }) => {
         return <EmailIcon {...props} />;
       case 'linkedIn':
         return <LinkedInIcon {...props} />;
+      case 'resume':
+        return <AssignmentIcon {...props} />;
       default:
         return <></>;
     }
