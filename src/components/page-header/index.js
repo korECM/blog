@@ -24,7 +24,7 @@ const PageHeader = ({ siteTitle }) => {
                 </Link>
               </div>
               <div className="trailing-section">
-                <a className="link" href="https://korecm.oopy.io">
+                <a className="link" href="https://korecm.oopy.io?utm_source=blog&utm_medium=navbar&utm_campaign=just_link">
                   Resume
                 </a>
                 <Link className="link" to="/posts">
