@@ -81,13 +81,13 @@ categories: Database
 
 ## 2NF
 
-2NF는 후보키의 **진부분집합**에서 키가 아닌 속성에 함수 종속성을 제거하는 작업이다. 이런 종속성을 **부분 함수 종속성(Partial Functional Dependency)**라고 한다.
+2NF는 후보키의 **진부분집합**에서 키가 아닌 속성에 함수 종속성을 제거하는 작업이다. 이런 종속성을 **부분 함수 종속성(Partial Functional Dependency)** 라고 한다.
 
 > 진 부분집합이란 부분집합 중 원래 자신의 집합을 제외한 것을 말한다  
 
 즉, 다음과 같은 종속성을 제거하는 작업이다
 
-![](/assets/images/Post/NormalizationTheory/3/2NF.png)
+![](images/2NF.png)
 
 1NF를 만족하는 릴레이션 중 부분 함수 종속성을 가지지 않는다면 릴레이션은 바로 2NF가 된다. 예를 들어 후보키가 1개인 1NF 릴레이션은 진부분집합이 공집합 뿐이므로 자동으로 2NF를 만족한다.
 
@@ -133,7 +133,7 @@ categories: Database
 
 > 추이 함수 종속성이란 키가 아닌 속성 사이의 함수 종속성을 말한다.  
 
-![](/assets/images/Post/NormalizationTheory/3/3NF.png)
+![](images/3NF.png)
 
 만약 키가 아닌 속성의 집합 A, B 사이에 A -> B가 성립한다면 슈퍼키를 통해 A의 값이 정해질 수 있고 함수 종속성에 따라 B 또한 결정되게 된다. 이렇게 단계적으로 함수 종속성이 존재해 추이 함수 종속성이라고 부른다.
 
@@ -170,7 +170,7 @@ categories: Database
 
 마지막으로 BCNF란 자명하지 않은 함수 종속성이 모두 제거된 상태의 정규형이다. 우리가 아직 제거하지 못한 함수 종속성은 키가 아닌 속성에서 후보키의 진부분집합에 대한 함수 종속성이다.
 
-![](/assets/images/Post/NormalizationTheory/3/BCNF.png)
+![](images/BCNF.png)
 
 | <u>학번</u> |  <u>학부</u>   |  분야  |
 | :---------: | :------------: | :----: |
